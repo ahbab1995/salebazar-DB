@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const { MongoClient, ServerApiVersion } = require("mongodb");
+const jwt = require('jsonwebtoken');
 var app = express();
 
 app.use(cors());
@@ -22,6 +23,14 @@ async function run() {
     console.log("Connected correctly to server");
 
     const productCollection = client.db("salebazar").collection("products");
+
+    app.post('/login',async(req,res)=>{
+      const email = req.body;
+
+      const token = jwt.sign(email, process.env.ACCESS_TOKEN);
+
+      res.send({ token })
+    })
 
     app.post('/uploadpd',async(req,res)=>{
       const product = req.body;
