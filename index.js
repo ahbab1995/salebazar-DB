@@ -20,6 +20,16 @@ async function run() {
   try {
     await client.connect();
     console.log("Connected correctly to server");
+
+    const productCollection = client.db("salebazar").collection("products");
+
+    app.post('/uploadpd',async(req,res)=>{
+      const product = req.body;
+      const result = await productCollection.insertOne(product);
+      res.send({ success: 'Product Upload Successfully' })
+    })
+
+
   } finally {
     // await client.close();
   }
