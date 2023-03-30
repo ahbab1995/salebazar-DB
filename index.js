@@ -34,8 +34,16 @@ async function run() {
 
     app.post('/uploadpd',async(req,res)=>{
       const product = req.body;
-      const result = await productCollection.insertOne(product);
-      res.send({ success: 'Product Upload Successfully' })
+      const tokenInfo = req.headers.authorization;
+      const [email, accessToken] = tokenInfo.split(" ")
+      const decoded = verifyToken(accessToken)
+      if (email === decoded.email) {
+        const result = await productCollection.insertOne(product);
+        res.send({ success: 'Product Upload Successfully' })
+      } else {
+        res.send({ success: 'UnAuthoraized Access' })
+    }
+      
     })
 
 
@@ -52,3 +60,19 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+// verify token function
+function verifyToken(token) {
+  let email;
+  jwt.verify(token, process.env.ACCESS_TOKEN, function (err, decoded) {
+      if (err) {
+          email = 'Invalid email'
+      }
+      if (decoded) {
+          console.log(decoded)
+          email = decoded
+      }
+  });
+  return email;
+}
+
