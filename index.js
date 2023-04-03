@@ -23,6 +23,7 @@ async function run() {
     console.log("Connected correctly to server");
 
     const productCollection = client.db("salebazar").collection("products");
+    const addorderCollection = client.db("salebazar").collection("orders");
 
     app.post('/login',async(req,res)=>{
       const email = req.body;
@@ -51,7 +52,12 @@ async function run() {
       res.send(products)
     })
 
-    app.post('/orderlist')
+    app.post("/addOrder", async (req, res) => {
+      const orderInfo = req.body;
+
+      const result = await addorderCollection.insertOne(orderInfo);
+      res.send({ success: 'order complete' })
+  })
 
 
   } finally {
