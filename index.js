@@ -59,6 +59,19 @@ async function run() {
       res.send({ success: 'order complete' })
   })
 
+  app.get('/orderlist',async(req,res)=>{
+    const tokenInfo = req.headers.authorization;
+    const [email, accessToken] = tokenInfo.split(" ")
+    console.log(email, accessToken)
+    const decoded = verifyToken(accessToken)
+    if (email === decoded.email) {
+      const orders = await addorderCollection.find({email:email}).toArray();
+      res.send(orders)
+    } else {
+      res.send({ success: 'UnAuthoraized Access' })
+  }
+  })
+
 
   } finally {
     // await client.close();
